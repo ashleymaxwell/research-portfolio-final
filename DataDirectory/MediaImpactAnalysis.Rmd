@@ -1,0 +1,77 @@
+---
+title: "CapstoneProject"
+author: "Ashley Maxwell"
+date: "May 11, 2016"
+output: html_document
+---
+
+```{r}
+dat<-read.csv("Questiondata.csv")
+```
+
+```{r}
+str(dat)
+```
+As we can see dat from the data frame has four variables:Cover, Home, Coffee, Article
+```{r}
+dat$total = dat$Cover + dat$Home + dat$Coffee
+```
+```{r}
+mean(dat$total[dat$Article=="positive"])
+mean(dat$total[dat$Article=="neutral"])
+```
+
+
+```{r}
+t.test(dat$total[dat$Article=="positive"],
+       dat$total[dat$Article=="neutral"],
+       var.equal=TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(gplots)
+library(dplyr)
+```
+```{r}
+temp<-dat%>%group_by(Article)%>%
+  summarize(means=mean(total),
+            sems=sd(total)/sqrt(length(total)))
+```
+```{r}
+f<-ggplot(temp,aes(x=factor(Article),y=means))+
+  geom_bar(stat="identity", color="black",
+           fill=c("deepskyblue2", "deeppink"))+
+  geom_errorbar(aes(ymax=means+sems,
+                    ymin=means-sems),
+                width=.2)+
+  ggtitle("Responses")+
+  labs(x="Article", y="Mean Response")+
+  scale_x_discrete(breaks=c("positive","neutral"),
+                   labels=c("Positive","Neutral"))+
+  theme(plot.title=element_text(size=15,
+                                face="bold",
+                                vjust=.5))+
+  theme(axis.title.x=element_text(size=12,
+                                  face="bold",
+                                  vjust=-.25))+
+  theme(axis.title.y=element_text(size=12,
+                                  face="bold",
+                                  vjust=.25))+
+  theme(axis.text.x=element_text(size=10,
+                                 face="bold",
+                                 color="black"))+
+  theme(axis.text.y=element_text(size=10,
+                                 face="bold",
+                                 color="black"))+
+  coord_cartesian(ylim=c(min(temp$means)-2*max(temp$sems),
+                         max(temp$means)+2*max(temp$sems)))+
+  theme(panel.border=element_blank(),
+        axis.line=element_line())+
+  theme(panel.grid.major.x=element_blank())+
+  theme(panel.grid.major.y=element_line(color="darkgrey"))+
+  theme(panel.grid.minor.y=element_blank())
+f
+```
+
+

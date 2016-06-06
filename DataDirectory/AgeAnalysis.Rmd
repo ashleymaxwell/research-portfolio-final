@@ -1,0 +1,23 @@
+---
+title: "Age"
+author: "Ashley Maxwell"
+date: "May 17, 2016"
+output: html_document
+---
+
+```{r}
+dat<-read.csv("AgeResults.csv")
+```
+```{r}
+str(dat)
+```
+
+```{r}
+dat$total = dat$Cover + dat$Home + dat$Coffee
+```
+
+
+```{r}
+summary(aov(total~Age*Article, data = dat))
+```
+
